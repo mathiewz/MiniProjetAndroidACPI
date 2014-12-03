@@ -24,9 +24,8 @@ import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 
 public class Notepadv1 extends ListActivity {
-	public static final int INSERT_ID = Menu.FIRST;
+	public static final int REMOVE_ALL_ID = Menu.FIRST;
 	
-	private int mNoteNumber = 1;
 	private NotesDbAdapter mDbHelper;
     
     /** Called when the activity is first created. */
@@ -42,29 +41,32 @@ public class Notepadv1 extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	boolean result = super.onCreateOptionsMenu(menu);
-        menu.add(0, INSERT_ID, 0, R.string.menu_insert);
+        menu.add(0, REMOVE_ALL_ID, 0, R.string.menu_insert);
         return result;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
-        case INSERT_ID:
-            createNote();
+        case REMOVE_ALL_ID:
+            removeAll();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
     
-    private void createNote() {
-        String noteName = "Person " + mNoteNumber++;
-        mDbHelper.createNote(noteName);
+    private void removeAll() {
+    	mDbHelper.deleteAllPerson();
+	}
+
+	private void createNote(String name) {
+        mDbHelper.createPerson(name);
         fillData();
     }
     
     private void fillData() {
         // Get all of the notes from the database and create the item list
-        Cursor c = mDbHelper.fetchAllNotes();
+        Cursor c = mDbHelper.fetchAllPerson();
         startManagingCursor(c);
 
         String[] from = new String[] { NotesDbAdapter.KEY_NAME };
