@@ -57,8 +57,8 @@ public class Notepadv1 extends ListActivity {
     }
     
     private void createNote() {
-        String noteName = "Note " + mNoteNumber++;
-        mDbHelper.createNote(noteName, "");
+        String noteName = "Person " + mNoteNumber++;
+        mDbHelper.createNote(noteName);
         fillData();
     }
     
@@ -67,7 +67,7 @@ public class Notepadv1 extends ListActivity {
         Cursor c = mDbHelper.fetchAllNotes();
         startManagingCursor(c);
 
-        String[] from = new String[] { NotesDbAdapter.KEY_TITLE };
+        String[] from = new String[] { NotesDbAdapter.KEY_NAME };
         int[] to = new int[] { R.id.text1 };
         
         // Now create an array adapter and set it to display using our row
