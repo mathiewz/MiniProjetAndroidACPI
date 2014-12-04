@@ -34,12 +34,12 @@ import android.util.Log;
  * of using a collection of inner classes (which is less scalable and not
  * recommended).
  */
-public class NotesDbAdapter {
+public class PersonsDbAdapter {
 
     public static final String KEY_NAME = "name";
     public static final String KEY_ROWID = "_id";
 
-    private static final String TAG = "NotesDbAdapter";
+    private static final String TAG = "PersonsDbAdapter";
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
 
@@ -52,7 +52,7 @@ public class NotesDbAdapter {
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "persons";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 3;
 
     private final Context mCtx;
 
@@ -72,7 +72,7 @@ public class NotesDbAdapter {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS notes");
+            db.execSQL("DROP TABLE IF EXISTS persons");
             onCreate(db);
         }
     }
@@ -83,7 +83,7 @@ public class NotesDbAdapter {
      * 
      * @param ctx the Context within which to work
      */
-    public NotesDbAdapter(Context ctx) {
+    public PersonsDbAdapter(Context ctx) {
         this.mCtx = ctx;
     }
 
@@ -96,7 +96,7 @@ public class NotesDbAdapter {
      *         initialization call)
      * @throws SQLException if the database could be neither opened or created
      */
-    public NotesDbAdapter open() throws SQLException {
+    public PersonsDbAdapter open() throws SQLException {
         mDbHelper = new DatabaseHelper(mCtx);
         mDb = mDbHelper.getWritableDatabase();
         return this;
@@ -112,11 +112,10 @@ public class NotesDbAdapter {
      * successfully created return the new rowId for that note, otherwise return
      * a -1 to indicate failure.
      * 
-     * @param title the title of the note
-     * @param body the body of the note
+     * @param name the title of the note
      * @return rowId or -1 if failed
      */
-    public long createPerson(String name) {
+    public long createNote(String name) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_NAME, name);
 
@@ -129,18 +128,12 @@ public class NotesDbAdapter {
      * @param rowId id of note to delete
      * @return true if deleted, false otherwise
      */
-    public boolean deletePerson(long rowId) {
+    public boolean deleteNote(long rowId) {
 
         return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
-    
-    /**
-     * Delete All the persons
-     * 
-     * @return true if deleted, false otherwise
-     */
-    public boolean deleteAllPerson() {
 
+    public boolean deleteAll(){
         return mDb.delete(DATABASE_TABLE, null, null) > 0;
     }
 
@@ -149,7 +142,7 @@ public class NotesDbAdapter {
      * 
      * @return Cursor over all notes
      */
-    public Cursor fetchAllPerson() {
+    public Cursor fetchAllNotes() {
 
         return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_NAME
                 }, null, null, null, null, null);
@@ -162,12 +155,12 @@ public class NotesDbAdapter {
      * @return Cursor positioned to matching note, if found
      * @throws SQLException if note could not be found/retrieved
      */
-    public Cursor fetchPerson(long rowId) throws SQLException {
+    public Cursor fetchNote(long rowId) throws SQLException {
 
         Cursor mCursor =
 
             mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
-                    KEY_NAME}, KEY_ROWID + "=" + rowId, null,
+                            KEY_NAME}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -182,11 +175,10 @@ public class NotesDbAdapter {
      * values passed in
      * 
      * @param rowId id of note to update
-     * @param title value to set note title to
-     * @param body value to set note body to
+     * @param name value to set note title to
      * @return true if the note was successfully updated, false otherwise
      */
-    public boolean updatePerson(long rowId, String name) {
+    public boolean updateNote(long rowId, String name) {
         ContentValues args = new ContentValues();
         args.put(KEY_NAME, name);
 
