@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/mnt/iut/sdaniel/Documents/Android Mathieu/Notepadv1Solution/app/src/androidTest/res" />
+        <source path="/mnt/iut/sdaniel/Documents/Android Mathieu/Notepadv1Solution/app/build/generated/res/rs/test/debug" />
+        <source path="/mnt/iut/sdaniel/Documents/Android Mathieu/Notepadv1Solution/app/build/generated/res/generated/test/debug" />
+    </dataSet>
+
+</merger>

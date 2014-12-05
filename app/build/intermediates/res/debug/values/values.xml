@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/mnt/iut/sdaniel/Documents/Android%20Mathieu/Notepadv1Solution/app/src/main/res/values/strings.xml -->
+    <eat-comment />
+
+    <string-array name="famille">
+        <item>parent de</item>
+        <item>enfant de</item>
+        <item>conjoint de</item>
+    </string-array>
+    <!-- From: file:/mnt/iut/sdaniel/Documents/Android%20Mathieu/Notepadv1Solution/app/src/main/res/values/colors.xml -->
+    <eat-comment />
+
+    <color name="black_overlay">#66000000</color>
+    <!-- From: file:/mnt/iut/sdaniel/Documents/Android%20Mathieu/Notepadv1Solution/app/src/main/res/values/attrs.xml -->
+    <eat-comment />
+
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="metaButtonBarStyle" format="reference" />
+        <attr name="metaButtonBarButtonStyle" format="reference" />
+    </declare-styleable>
+    <!-- From: file:/mnt/iut/sdaniel/Documents/Android%20Mathieu/Notepadv1Solution/app/src/main/res/values/strings.xml -->
+    <eat-comment />
+
+    <string name="add_relation">Add a relation</string>
+    <string name="app_name">Arbre Généalogique </string>
+    <string name="delete_all_contact">Remove all contact</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="import_all_contact">Import all contact</string>
+    <string name="import_contact">Import contact</string>
+    <string name="menu_delete">Remove person</string>
+    <string name="menu_insert">Add person</string>
+    <string name="no_notes">No persons yet</string>
+    <string name="title_activity_add_relation">add_relation</string>
+    <string name="title_activity_display_message">Add relation</string>
+    <!-- From: file:/mnt/iut/sdaniel/Documents/Android%20Mathieu/Notepadv1Solution/app/src/main/res/values/styles.xml -->
+    <eat-comment />
+
+    <style name="ButtonBar">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:background">@android:drawable/bottom_bar</item>
+    </style>
+
+    <style name="ButtonBarButton" />
+
+    <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">@style/ButtonBar</item>
+        <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
+    </style>
+
+</resources>
