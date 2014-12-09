@@ -3,4 +3,8 @@
     <string name="app_name">Notepad v1</string>
     <string name="no_notes">No Notes Yet</string>
     <string name="menu_insert">Add Item</string>
+    <string name="import_contact">Import a contact</string>
+    <string name="import_all_contact">Import all contacts</string>
+    <string name="delete_all_contact">Delete all contacts</string>
+    <string name="menu_delete">Delete</string>
 </resources>
