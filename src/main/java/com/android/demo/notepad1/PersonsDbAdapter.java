@@ -24,6 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.HashMap;
+
 /**
  * Simple notes database access helper class. Defines the basic CRUD operations
  * for the notepad example, and gives the ability to list all notes as well as
@@ -36,23 +38,28 @@ import android.util.Log;
  */
 public class PersonsDbAdapter {
 
-    public static final String KEY_NAME = "name";
-    public static final String KEY_ROWID = "_id";
+    private static final String DATABASE_NAME = "data";
+
+    private static final String DATABASE_TABLE_PERSON = "persons";
+    public static final String KEY_PERSON_ROWID = "_id";
+    public static final String KEY_PERSON_NAME = "name";
+
+    private static final String DATABASE_TABLE_RELATION = "relations";
+    public static final String KEY_RELATION_ID1 = "id1";
+    public static final String KEY_RELATION_ID2 = "id2";
+    public static final String KEY_RELATION_TYPE = "TYPE";
 
     private static final String TAG = "PersonsDbAdapter";
-    private DatabaseHelper mDbHelper;
+
     private SQLiteDatabase mDb;
+
+    private static final int DATABASE_VERSION = 9;
 
     /**
      * Database creation sql statement
      */
-    private static final String DATABASE_CREATE =
-        "create table persons (_id integer primary key autoincrement, "
-        + "name text not null);";
-
-    private static final String DATABASE_NAME = "data";
-    private static final String DATABASE_TABLE = "persons";
-    private static final int DATABASE_VERSION = 3;
+    private static final String DATABASE_CREATE_TABLE_PERSON = "create table "+ DATABASE_TABLE_PERSON +" ("+KEY_PERSON_ROWID+" integer primary key autoincrement, "+KEY_PERSON_NAME+" text not null);";
+    private static final String DATABASE_CREATE_TABLE_RELATION = "create table "+ DATABASE_TABLE_RELATION +" ("+KEY_RELATION_ID1+" integer, "+KEY_RELATION_ID2+" integer, "+KEY_RELATION_TYPE+" integer);";
 
     private final Context mCtx;
 
@@ -65,14 +72,16 @@ public class PersonsDbAdapter {
         @Override
         public void onCreate(SQLiteDatabase db) {
 
-            db.execSQL(DATABASE_CREATE);
+            db.execSQL(DATABASE_CREATE_TABLE_PERSON);
+            db.execSQL(DATABASE_CREATE_TABLE_RELATION);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS persons");
+            db.execSQL("DROP TABLE IF EXISTS "+ DATABASE_TABLE_PERSON);
+            db.execSQL("DROP TABLE IF EXISTS "+ DATABASE_TABLE_RELATION);
             onCreate(db);
         }
     }
@@ -97,15 +106,10 @@ public class PersonsDbAdapter {
      * @throws SQLException if the database could be neither opened or created
      */
     public PersonsDbAdapter open() throws SQLException {
-        mDbHelper = new DatabaseHelper(mCtx);
+        DatabaseHelper mDbHelper = new DatabaseHelper(mCtx);
         mDb = mDbHelper.getWritableDatabase();
         return this;
     }
-
-    public void close() {
-        mDbHelper.close();
-    }
-
 
     /**
      * Create a new note using the title and body provided. If the note is
@@ -117,9 +121,9 @@ public class PersonsDbAdapter {
      */
     public long createNote(String name) {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_NAME, name);
+        initialValues.put(KEY_PERSON_NAME, name);
 
-        return mDb.insert(DATABASE_TABLE, null, initialValues);
+        return mDb.insert(DATABASE_TABLE_PERSON, null, initialValues);
     }
 
     /**
@@ -130,11 +134,11 @@ public class PersonsDbAdapter {
      */
     public boolean deleteNote(long rowId) {
 
-        return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.delete(DATABASE_TABLE_PERSON, KEY_PERSON_ROWID + "=" + rowId, null) > 0;
     }
 
     public boolean deleteAll(){
-        return mDb.delete(DATABASE_TABLE, null, null) > 0;
+        return mDb.delete(DATABASE_TABLE_PERSON, null, null) > 0;
     }
 
     /**
@@ -142,46 +146,57 @@ public class PersonsDbAdapter {
      * 
      * @return Cursor over all notes
      */
-    public Cursor fetchAllNotes() {
+    public Cursor fetchAllPersons() {
 
-        return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_NAME
+        return mDb.query(DATABASE_TABLE_PERSON, new String[] {KEY_PERSON_ROWID, KEY_PERSON_NAME
                 }, null, null, null, null, null);
     }
 
-    /**
-     * Return a Cursor positioned at the note that matches the given rowId
-     * 
-     * @param rowId id of note to retrieve
-     * @return Cursor positioned to matching note, if found
-     * @throws SQLException if note could not be found/retrieved
-     */
-    public Cursor fetchNote(long rowId) throws SQLException {
-
+    public String fetchPerson(long rowId) throws SQLException {
+        String ret = null;
         Cursor mCursor =
 
-            mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
-                            KEY_NAME}, KEY_ROWID + "=" + rowId, null,
-                    null, null, null, null);
+                mDb.query(true, DATABASE_TABLE_PERSON, new String[] {KEY_PERSON_ROWID,
+                                KEY_PERSON_NAME}, KEY_PERSON_ROWID + "=" + rowId, null,
+                        null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
+            ret = mCursor.getString(mCursor.getColumnIndex(KEY_PERSON_NAME));
         }
-        return mCursor;
+        return ret;
 
     }
 
-    /**
-     * Update the note using the details provided. The note to be updated is
-     * specified using the rowId, and it is altered to use the title and body
-     * values passed in
-     * 
-     * @param rowId id of note to update
-     * @param name value to set note title to
-     * @return true if the note was successfully updated, false otherwise
-     */
-    public boolean updateNote(long rowId, String name) {
-        ContentValues args = new ContentValues();
-        args.put(KEY_NAME, name);
+    public long getIdFromName(String name) throws SQLException {
+        long ret = -1;
+        Cursor mCursor =
 
-        return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+                mDb.query(true, DATABASE_TABLE_PERSON, new String[] {KEY_PERSON_ROWID,
+                                KEY_PERSON_NAME}, KEY_PERSON_NAME + "='" + name+"'", null,
+                        null, null, null, null);
+        if (mCursor != null) if (mCursor.moveToFirst())
+            ret = mCursor.getLong(mCursor.getColumnIndex(KEY_PERSON_ROWID));
+        return ret;
+
+    }
+
+    public long addRelation(int id1, int id2, int type) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_RELATION_ID1, id1);
+        initialValues.put(KEY_RELATION_ID2, id2);
+        initialValues.put(KEY_RELATION_TYPE, type);
+
+        return mDb.insert(DATABASE_TABLE_RELATION, null, initialValues);
+    }
+
+    public HashMap<Integer, Integer> getRelations(int id){
+        HashMap<Integer, Integer> map = new HashMap<>();
+        Cursor cursor = mDb.query(DATABASE_TABLE_RELATION,new String[] {KEY_RELATION_ID2, KEY_RELATION_TYPE},KEY_RELATION_ID1 + "=" + id, null, null, null, null);
+        if (cursor.moveToFirst()) do {
+            int id2 = cursor.getInt(cursor.getColumnIndex(KEY_RELATION_ID2));
+            int type = cursor.getInt(cursor.getColumnIndex(KEY_RELATION_TYPE));
+            map.put(id2, type);
+        } while (cursor.moveToNext());
+        return map;
     }
 }

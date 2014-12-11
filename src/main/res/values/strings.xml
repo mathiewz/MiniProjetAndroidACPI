@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Arbre Généalogique </string>
+    <string name="no_notes">No persons yet</string>
+    <string name="menu_insert">Add person</string>
+    <string name="menu_delete">Remove person</string>
+    <string name="import_contact">Import contact</string>
+    <string name="import_all_contact">Import all contact</string>
+    <string name="delete_all_contact">Remove all contact</string>
+    <string name="add_relation">Add a relation</string>
+    <string name="title_activity_add_relation">Add a new relation</string>
+    <string name="title_activity_display_message">Add relation</string>
+
+    <string-array name="famille">
+        <item>parent de</item>
+        <item>enfant de</item>
+        <item>conjoint de</item>
+    </string-array>
+
+    <string name="name">Hello world!</string>
+    <string name="add_the_relation">Ajouter La relation</string>
+    <string name="title_activity_list_relations">Liste des Relations</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_relations">Pas de relations</string>
+
+</resources>
